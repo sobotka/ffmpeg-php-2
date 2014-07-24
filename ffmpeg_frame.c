@@ -433,6 +433,16 @@ FFMPEG_PHP_METHOD(ffmpeg_frame, getPresentationTimestamp)
     GET_FRAME_RESOURCE(getThis(), ff_frame);
 
     //RETURN_DOUBLE((double)ff_frame->pts / AV_TIME_BASE);
+    /* Quite sure that the following will fail to deliver the correct frame count in a good number of instances. This was the original
+       code that OpenCV had, that I patched to be similar to your calculation above. 
+       
+       return (double)ceil(ic->duration * av_q2d(video_st->r_frame_rate) / AV_TIME_BASE);
+       
+       This is rather old, and may not be up to to FFMPEG trunk depreciations standard, but hopefully you get the idea.
+       I'm posting it here to offer a hint if anyone has problematic returns on frame counts.
+       Original OpenCV patch https://code.ros.org/trac/opencv/attachment/ticket/850/ffmpeg-framecount.patch based
+       on frame count calculations by Peter Schlaile at the Blender Foundation.
+    */
     RETURN_DOUBLE(ff_frame->pts);
 }
 /* }}} */
